@@ -103,7 +103,7 @@ export default class ImageTool {
    *
    * @returns {Array}
    */
-  static get tunes() {
+  get tunes() {
     return [
       {
         name: 'withBorder',
@@ -233,7 +233,7 @@ export default class ImageTool {
   renderSettings() {
     // Merge default tunes with the ones that might be added by user
     // @see https://github.com/editor-js/image/pull/49
-    const tunes = ImageTool.tunes.concat(this.config.actions);
+    const tunes = this.tunes.concat(this.config.actions);
 
     return tunes.map(tune => ({
       icon: tune.icon,
@@ -244,9 +244,7 @@ export default class ImageTool {
       onActivate: () => {
         /* If it'a user defined tune, execute it's callback stored in action property */
         if (typeof tune.action === 'function') {
-          tune.action(tune.name);
-
-          return;
+          tune.action(tune.name, this);
         }
         this.tuneToggled(tune.name);
       },
@@ -354,7 +352,7 @@ export default class ImageTool {
     this._data.caption = data.caption || '';
     this.ui.fillCaption(this._data.caption);
 
-    ImageTool.tunes.forEach(({ name: tune }) => {
+    this.tunes.forEach(({ name: tune }) => {
       const value = typeof data[tune] !== 'undefined' ? data[tune] === true || data[tune] === 'true' : false;
 
       this.setTune(tune, value);
